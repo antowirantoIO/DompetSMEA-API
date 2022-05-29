@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Services;
+
+use App\Interfaces\ProductLimitedInterface;
+use App\Internal\Dto\AvailabilityDtoInterface;
+
+final class BasketService implements BasketServiceInterface
+{
+    public function availability(AvailabilityDtoInterface $availabilityDto): bool
+    {
+        $basketDto = $availabilityDto->getBasketDto();
+        $customer = $availabilityDto->getCustomer();
+        foreach ($basketDto->items() as $itemDto) {
+            $product = $itemDto->getProduct();
+            if ($product instanceof ProductLimitedInterface && !$product->canBuy(
+                $customer,
+                $itemDto->count(),
+                $availabilityDto->isForce()
+            )) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
