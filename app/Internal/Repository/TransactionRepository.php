@@ -31,8 +31,8 @@ final class TransactionRepository implements TransactionRepositoryInterface
         }
 
         $this->transaction->newQuery()
-            ->insert($values)
-        ;
+            ->insert($values);
+        
     }
 
     public function insertOne(TransactionDtoInterface $dto): Transaction
