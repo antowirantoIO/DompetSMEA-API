@@ -69,6 +69,11 @@ class Transaction extends Model
         return $this->morphTo();
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(config('wallet.user.model', User::class), 'payable_id');
+    }
+
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(config('wallet.wallet.model', WalletModel::class));

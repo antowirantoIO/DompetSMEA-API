@@ -4,15 +4,18 @@ namespace App\Models;
 
 use App\Traits\HasWallet;
 use App\Interfaces\Wallet;
+use App\Traits\CanConfirm;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements Wallet
 {
-    use HasApiTokens, HasFactory, Notifiable, HasWallet;
+    use HasApiTokens, HasFactory, Notifiable, HasWallet, CanConfirm;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +26,7 @@ class User extends Authenticatable implements Wallet
         'name',
         'email',
         'password',
+        'pin',
     ];
 
     /**
@@ -33,6 +37,7 @@ class User extends Authenticatable implements Wallet
     protected $hidden = [
         'password',
         'remember_token',
+        'pin',
     ];
 
     /**
@@ -43,4 +48,9 @@ class User extends Authenticatable implements Wallet
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function transaction(): MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'payable', 'payable_type');
+    }
 }
