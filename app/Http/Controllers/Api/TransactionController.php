@@ -15,21 +15,15 @@ use App\Services\ConsistencyServiceInterface;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function transactionHistory()
     {
-        //
+        $data = Auth::user()->transactions;
+        return response()->json($data, 200);
     }
 
     public function depositBalance(Request $request)
     {
         $response = $this->_handleCharge($request);
-
-        // dd($response);
         $meta = [
             'transaction_id' => $response['transaction_id'],
             'order_id' => $response['order_id'],
@@ -62,6 +56,11 @@ class TransactionController extends Controller
             ],
             'bank_transfer' => [
                 'bank' => $request->vendor ?? '',
+            ],
+            "customer_details" => [
+                "first_name" => Auth::user()->name,
+                "email" => Auth::user()->email,
+                "phone" => Auth::user()->number_phone ?? '',
             ],
             "echannel" => [
                 "bill_info1" => "Payment:",

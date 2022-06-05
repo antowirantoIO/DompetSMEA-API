@@ -25,19 +25,20 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'min:8'],
+            'number_phone' => ['required', 'string', 'max:255', 'unique:users'],
+            'device_name' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'number_phone' => $request->number_phone,
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return response()->noContent();
+        return $user->createToken($request->device_name)->plainTextToken;
     }
 }
