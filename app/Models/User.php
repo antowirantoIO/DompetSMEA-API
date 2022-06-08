@@ -6,6 +6,7 @@ use App\Traits\HasWallet;
 use App\Interfaces\Wallet;
 use App\Traits\CanConfirm;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements Wallet
 {
-    use HasApiTokens, HasFactory, Notifiable, HasWallet, CanConfirm;
+    use HasApiTokens, HasFactory, Notifiable, HasWallet, CanConfirm, HasRoles;
 
     /**
      * The attributes that are mass assignable.

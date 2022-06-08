@@ -3,10 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\DepositController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\WebhookHandlesController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserSettingsController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -36,20 +41,21 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 
-Route::post('/transaction/handlewebhook', [TransactionController::class, 'handleWebhook']);
+Route::post('/transaction/handlewebhook', [WebhookHandlesController::class, 'handleWebhookMidtrans']);
 
 Route::middleware(['auth:sanctum'])->group(function(){
-    Route::prefix('/wallet')->group(function(){
-        Route::get('/getWallet', [WalletController::class, 'getWallet']);
-    });
+    Route::get('/wallet/getWallet', [WalletController::class, 'getWallet']);
 
-    Route::prefix('/transaction')->group(function(){
-        Route::get('/history', [TransactionController::class, 'transactionHistory']);
-        Route::post('/depositBalance', [TransactionController::class, 'depositBalance']);
-        Route::post('/transferBalance', [TransactionController::class, 'transferBalance']);
-    });
+    Route::get('/transaction/history', [TransactionController::class, 'transactionHistory']);
+    Route::get('/transaction/showDetail/{transaction:uuid}', [TransactionController::class, 'showDetail']);
 
-    Route::prefix('/settings/user')->group(function(){
-        Route::post('/setPin', [UserSettingsController::class, 'setPin']);
-    });
+    Route::post('/transaction/depositBalance', DepositController::class);
+    Route::post('/transaction/transferBalance', TransferController::class);
+
+    Route::get('/transfer/history', [TransferController::class, 'transferHistory']);
+    Route::get('/payment/history', [PaymentController::class, 'paymentHistory']);
+
+    Route::post('/transaction/pay', [PaymentController::class, 'pay']);
+
+    Route::post('/settings/user/setPin', [UserSettingsController::class, 'setPin']);
 });
