@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Models\Transfer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -57,9 +58,8 @@ class PaymentController extends Controller
     }
 
     public function paymentHistory(){
-        $transfers = app(CastServiceInterface::class)
-        ->getWallet(Auth::user(), false)
-        ->morphMany(config('wallet.transfer.model', Transfer::class), 'from');
-        return response()->json(['status' => 'success', 'message' => 'Payment history', 'data' => $transfers], 200);
+        $payment = Transaction::where('payable_id', Auth::user()->id)->where('type', Transfer::STATUS_PAID)->get();
+
+        return response()->json(['status' => 'success', 'message' => 'Payment history', 'data' => $payment], 200);
     }
 }

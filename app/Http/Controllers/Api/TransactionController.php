@@ -11,9 +11,8 @@ class TransactionController extends Controller
 {
     public function transactionHistory()
     {
-        $data = app(CastServiceInterface::class)
-        ->getHolder(Auth::user())
-        ->morphMany(config('wallet.transaction.model', Transaction::class), 'payable');
+        $data = Auth::user()->wallet->transactions;
+
         return response()->json($data, 200);
     }
 

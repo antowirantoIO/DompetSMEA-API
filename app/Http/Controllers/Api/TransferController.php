@@ -53,13 +53,13 @@ class TransferController extends Controller
         }
     }
 
+    
+
     /**
      * the transfer table is used to confirm the payment this method receives all transfers.
      */
     public function transferHistory(){
-        $transfers = app(CastServiceInterface::class)
-        ->getWallet(Auth::user(), false)
-        ->morphMany(config('wallet.transfer.model', Transfer::class), 'from');
+        $transfers = Auth::user()->wallet->transfers;
 
         return response()->json($transfers, 200);
     }
